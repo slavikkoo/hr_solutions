@@ -24,7 +24,7 @@
   --gold:#8B6414;--gold-dim:#D4B86A;--gold-glow:rgba(139,100,20,0.1);--gold-sub:rgba(139,100,20,0.06);
   --danger:#C03030;--danger-bg:rgba(192,48,48,0.08);
 }
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t0);font-size:13px;line-height:1.5;min-height:100vh;display:flex;overflow-x:hidden}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t0);font-size:14px;line-height:1.5;min-height:100vh;display:flex;overflow-x:hidden}
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4}
 
 /* ── SIDEBAR ── */
@@ -83,16 +83,17 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .btn-new:active{transform:translateY(0)}
 
 /* ── KPI ── */
-.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b1);border-bottom:1px solid var(--b1)}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--b1);border-bottom:1px solid var(--b1)}
 .kpi{background:var(--s1);padding:14px 20px;display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .kpi:nth-child(1)::before{background:linear-gradient(90deg,var(--t3),transparent)}
 .kpi:nth-child(2)::before{background:linear-gradient(90deg,#5B9CF6,transparent)}
 .kpi:nth-child(3)::before{background:linear-gradient(90deg,#6BCB77,transparent)}
 .kpi:nth-child(4)::before{background:linear-gradient(90deg,var(--danger),transparent)}
+.kpi:nth-child(5)::before{background:linear-gradient(90deg,#D4A853,transparent)}
 .kpi-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t2)}
 .kpi-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;letter-spacing:-.04em}
-.c-def{color:var(--t0)}.c-blue{color:#5B9CF6}.c-green{color:#6BCB77}.c-red{color:var(--danger)}
+.c-def{color:var(--t0)}.c-blue{color:#5B9CF6}.c-green{color:#6BCB77}.c-red{color:var(--danger)}.c-gold{color:var(--gold)}
 
 /* ── CONTENT ── */
 .content{padding:24px 28px;flex:1}
@@ -196,8 +197,8 @@ select option{background:var(--s2);color:var(--t0)}
 .rich-editor:empty::before{content:attr(placeholder);color:var(--t2);pointer-events:none}
 
 /* Link input */
-.link-row{display:flex;gap:6px;margin-top:6px;display:none}
-.link-row input{flex:1}
+.link-row{display:none;gap:6px;margin-top:6px;flex-wrap:wrap}
+.link-row input{flex:1;min-width:120px}
 .link-row.show{display:flex}
 
 /* confirm */
@@ -261,7 +262,7 @@ select option{background:var(--s2);color:var(--t0)}
   .sidebar-overlay.open{display:block}
   .mobile-header{display:flex}
   .topbar{display:none}
-  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
   .kpi{padding:12px 16px}
   .kpi-val{font-size:22px}
   .content{padding:16px}
@@ -331,18 +332,25 @@ select option{background:var(--s2);color:var(--t0)}
     <div class="fl">
       <label>Details</label>
       <div class="rich-toolbar" id="richToolbar">
-        <button class="rt-btn" title="Bold" onmousedown="event.preventDefault();fmt('bold')"><b>B</b></button>
-        <button class="rt-btn" title="Italic" onmousedown="event.preventDefault();fmt('italic')"><i>I</i></button>
-        <button class="rt-btn" title="Underline" onmousedown="event.preventDefault();fmt('underline')"><u>U</u></button>
+        <button class="rt-btn" title="Bold (Ctrl+B)" id="rtb-bold" onmousedown="event.preventDefault();rtFmt('bold')"><b>B</b></button>
+        <button class="rt-btn" title="Italic (Ctrl+I)" id="rtb-italic" onmousedown="event.preventDefault();rtFmt('italic')"><i style="font-style:italic">I</i></button>
+        <button class="rt-btn" title="Underline (Ctrl+U)" id="rtb-underline" onmousedown="event.preventDefault();rtFmt('underline')"><u>U</u></button>
+        <button class="rt-btn" title="Strikethrough" id="rtb-strikeThrough" onmousedown="event.preventDefault();rtFmt('strikeThrough')"><s>S</s></button>
         <div class="rt-sep"></div>
-        <button class="rt-btn" title="Link" id="linkBtn" onmousedown="event.preventDefault();toggleLinkRow()">🔗</button>
-        <button class="rt-btn" title="Remove formatting" onmousedown="event.preventDefault();fmt('removeFormat')">✕</button>
+        <button class="rt-btn" title="Bullet list" onmousedown="event.preventDefault();rtFmt('insertUnorderedList')">• ≡</button>
+        <button class="rt-btn" title="Numbered list" onmousedown="event.preventDefault();rtFmt('insertOrderedList')">1 ≡</button>
+        <div class="rt-sep"></div>
+        <button class="rt-btn" title="Insert link on selected text" id="rtb-link" onmousedown="event.preventDefault();rtToggleLink()">🔗</button>
+        <button class="rt-btn" title="Remove link" onmousedown="event.preventDefault();rtUnlink()">🔗̶</button>
+        <div class="rt-sep"></div>
+        <button class="rt-btn" title="Clear formatting" onmousedown="event.preventDefault();rtFmt('removeFormat')" style="font-size:11px">✕ fmt</button>
       </div>
       <div id="richEditor" class="rich-editor" contenteditable="true" placeholder="Add details, links, notes…" spellcheck="false"></div>
       <div class="link-row" id="linkRow">
-        <input id="linkUrl" placeholder="https://..." type="url">
-        <button class="mbtn prim" style="white-space:nowrap;padding:6px 12px" onmousedown="event.preventDefault();insertLink()">Insert</button>
-        <button class="mbtn" style="padding:6px 10px" onmousedown="event.preventDefault();hideLinkRow()">✕</button>
+        <input id="linkUrl" placeholder="https://…" type="url">
+        <input id="linkText" placeholder="Link text (optional)">
+        <button class="mbtn prim" style="white-space:nowrap;padding:6px 12px;flex-shrink:0" onmousedown="event.preventDefault();rtInsertLink()">Insert</button>
+        <button class="mbtn" style="padding:6px 10px;flex-shrink:0" onmousedown="event.preventDefault();rtHideLinkRow()">✕</button>
       </div>
     </div>
     <div class="mfooter">
@@ -484,6 +492,7 @@ const DEFAULT_STATUSES=[
   {id:'not_started',label:'Not Started',color:'#5E5C57'},
   {id:'in_progress',label:'In Progress',color:'#5B9CF6'},
   {id:'done',label:'Done',color:'#6BCB77'},
+  {id:'canceled',label:'Canceled',color:'#E05858'},
   {id:'continues',label:'Continues →',color:'#D4A853'},
 ];
 const DEFAULT_PRIOS=[
@@ -598,21 +607,82 @@ function closeSidebar(){
 }
 
 // ── RICH TEXT ──────────────────────────────────────────
-function fmt(cmd){document.getElementById('richEditor').focus();document.execCommand(cmd,false,null);}
-function toggleLinkRow(){
-  const lr=document.getElementById('linkRow');
-  lr.classList.toggle('show');
-  if(lr.classList.contains('show')) document.getElementById('linkUrl').focus();
-}
-function hideLinkRow(){document.getElementById('linkRow').classList.remove('show');document.getElementById('linkUrl').value='';}
-function insertLink(){
-  const url=document.getElementById('linkUrl').value.trim();
-  if(!url)return;
-  const ed=document.getElementById('richEditor');ed.focus();
+let rtSavedRange=null;
+
+function rtSaveSelection(){
   const sel=window.getSelection();
-  const text=sel&&sel.toString()?sel.toString():url;
-  document.execCommand('insertHTML',false,`<a href="${url}" target="_blank">${text}</a>`);
-  hideLinkRow();
+  if(sel&&sel.rangeCount>0) rtSavedRange=sel.getRangeAt(0).cloneRange();
+}
+function rtRestoreSelection(){
+  if(!rtSavedRange) return;
+  const sel=window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(rtSavedRange);
+}
+function rtFmt(cmd){
+  const ed=document.getElementById('richEditor');
+  ed.focus();
+  document.execCommand(cmd,false,null);
+  rtUpdateToolbar();
+}
+function rtUpdateToolbar(){
+  ['bold','italic','underline','strikeThrough'].forEach(cmd=>{
+    const btn=document.getElementById('rtb-'+cmd);
+    if(btn) btn.classList.toggle('active',document.queryCommandState(cmd));
+  });
+}
+function rtToggleLink(){
+  const ed=document.getElementById('richEditor');
+  // Save selection before showing input row
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount>0) rtSavedRange=sel.getRangeAt(0).cloneRange();
+  const lr=document.getElementById('linkRow');
+  const isOpen=lr.classList.contains('show');
+  if(isOpen){rtHideLinkRow();return;}
+  // Pre-fill link text from selection
+  const selText=sel?sel.toString():'';
+  document.getElementById('linkText').value=selText;
+  document.getElementById('linkUrl').value='';
+  lr.classList.add('show');
+  setTimeout(()=>document.getElementById('linkUrl').focus(),50);
+}
+function rtHideLinkRow(){
+  document.getElementById('linkRow').classList.remove('show');
+  document.getElementById('linkUrl').value='';
+  document.getElementById('linkText').value='';
+  rtSavedRange=null;
+}
+function rtInsertLink(){
+  const url=document.getElementById('linkUrl').value.trim();
+  if(!url){document.getElementById('linkUrl').focus();return;}
+  const ed=document.getElementById('richEditor');
+  ed.focus();
+  // Restore the selection the user had when they clicked the link button
+  if(rtSavedRange){
+    const sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(rtSavedRange);
+  }
+  const customText=document.getElementById('linkText').value.trim();
+  const sel=window.getSelection();
+  const selectedText=sel?sel.toString():'';
+  const linkLabel=customText||selectedText||url;
+  if(sel&&sel.rangeCount>0&&selectedText){
+    // Wrap existing selection in <a>
+    const range=sel.getRangeAt(0);
+    const a=document.createElement('a');
+    a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+    try{range.surroundContents(a);}
+    catch{document.execCommand('insertHTML',false,`<a href="${url}" target="_blank" rel="noopener noreferrer">${linkLabel}</a>`);}
+  }else{
+    document.execCommand('insertHTML',false,`<a href="${url}" target="_blank" rel="noopener noreferrer">${linkLabel}</a>`);
+  }
+  rtHideLinkRow();
+  rtUpdateToolbar();
+}
+function rtUnlink(){
+  document.getElementById('richEditor').focus();
+  document.execCommand('unlink',false,null);
 }
 
 // ── HELPERS ────────────────────────────────────────────
@@ -678,12 +748,14 @@ function rKpi(){
   const tot=vt.filter(t=>!t.copyOf).length;
   const inp=vt.filter(t=>t.status==='in_progress').length;
   const dn=vt.filter(t=>t.status==='done').length;
-  const ovd=vt.filter(t=>isOv(t)).length;
+  const canceled=vt.filter(t=>t.status==='canceled').length;
+  const cont=vt.filter(t=>t.continued&&!t.copyOf).length;
   document.getElementById('kpiStrip').innerHTML=`
     <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-val c-def">${tot}</div></div>
     <div class="kpi"><div class="kpi-label">In Progress</div><div class="kpi-val c-blue">${inp}</div></div>
-    <div class="kpi"><div class="kpi-label">Completed</div><div class="kpi-val c-green">${dn}</div></div>
-    <div class="kpi"><div class="kpi-label">Overdue</div><div class="kpi-val c-red">${ovd}</div></div>`;
+    <div class="kpi"><div class="kpi-label">Done</div><div class="kpi-val c-green">${dn}</div></div>
+    <div class="kpi"><div class="kpi-label">Canceled</div><div class="kpi-val c-red">${canceled}</div></div>
+    <div class="kpi"><div class="kpi-label">Continued</div><div class="kpi-val c-gold">${cont}</div></div>`;
 }
 function rContent(){
   const ms=qms(),vt=vts();
@@ -821,11 +893,12 @@ async function saveTask(){
     deadline:document.getElementById('f-deadline').value||null,
     note:document.getElementById('richEditor').innerHTML.trim()||null,
   };
+  const wasEditing=editingId;
   closeTask();
-  if(editingId!=null){
-    tasks=tasks.map(t=>t.id===editingId?{...t,...d}:t);
+  if(wasEditing!=null){
+    tasks=tasks.map(t=>t.id===wasEditing?{...t,...d}:t);
     render();showToast('Task updated');
-    if(isConfigured) await sbPatch('tasks',editingId,unmapT(tasks.find(t=>t.id===editingId)));
+    if(isConfigured) await sbPatch('tasks',wasEditing,unmapT(tasks.find(t=>t.id===wasEditing)));
   }else{
     const nt={id:nextId++,qId:activeQ,continued:false,copyOf:null,...d};
     tasks.push(nt);render();showToast('Task added');
@@ -854,7 +927,7 @@ function confirmDelM(id){
   document.getElementById('confirmModal').classList.add('open');
 }
 function confirmDelStatus(id){
-  if(['not_started','in_progress','done','continues'].includes(id)){showToast('Cannot delete default statuses');return;}
+  if(['not_started','in_progress','done','canceled','continues'].includes(id)){showToast('Cannot delete default statuses');return;}
   if(tasks.some(t=>t.status===id)){showToast('Tasks with this status exist');return;}
   const s=statuses.find(x=>x.id===id);if(!s)return;
   document.getElementById('cTitle').textContent='Delete Status';
@@ -1055,6 +1128,11 @@ function doExport(){
   document.getElementById(id).addEventListener('click',function(e){
     if(e.target===this){this.classList.remove('open');editingId=null;movingId=null;renamingQ=null;}
   });
+});
+// Rich text keyboard shortcuts & toolbar state sync
+document.addEventListener('selectionchange',()=>{
+  const ed=document.getElementById('richEditor');
+  if(document.activeElement===ed||ed.contains(document.activeElement)) rtUpdateToolbar();
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
