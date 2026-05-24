@@ -856,7 +856,7 @@ function openTask(month){
   document.getElementById('f-dir').value='HRMS';
   document.getElementById('f-start').value='';document.getElementById('f-deadline').value='';
   document.getElementById('richEditor').innerHTML='';
-  hideLinkRow();
+  rtHideLinkRow();
   renderMemberMulti();
   document.getElementById('taskModal').classList.add('open');
   setTimeout(()=>document.getElementById('f-name').focus(),120);
@@ -872,7 +872,7 @@ function editTask(id){
   document.getElementById('f-start').value=t.start||'';
   document.getElementById('f-deadline').value=t.deadline||'';
   document.getElementById('richEditor').innerHTML=t.note||'';
-  hideLinkRow();
+  rtHideLinkRow();
   renderMemberMulti();
   document.getElementById('taskModal').classList.add('open');
   setTimeout(()=>document.getElementById('f-name').focus(),120);
